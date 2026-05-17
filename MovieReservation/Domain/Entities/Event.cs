@@ -11,4 +11,11 @@ public sealed class Event
 
     public ICollection<Movie> Movies { get; set; } = [];
 
+    public ICollection<Reservation> Reservations { get; set; } = [];
+    public Venue Venue { get; set; } = null!;
+    public long VenueId { get; set; }
+
+    public ICollection<TicketType> TicketTypes { get; set; } = [];
+    public long TicketTypeId { get; set; }
+
 }
