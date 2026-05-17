@@ -8,7 +8,7 @@ public sealed class ApplicationUser : IdentityUser
     public string LastName { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<Reservation> Reservations { get; set; } = [];
 
-
-    public ICollection<Reservations> Reservations { get; set; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }
