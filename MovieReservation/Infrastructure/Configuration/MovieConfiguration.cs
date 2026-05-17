@@ -24,11 +24,16 @@ public sealed class MovieConfiguration : IEntityTypeConfiguration<Movie>
         
         builder.Property(e=>e.MinimumAgeRecruitment)
             .IsRequired();
+
+
+        builder.HasMany(e => e.Genres)
+            .WithMany(e => e.Movies)
+            .UsingEntity(t=>t.ToTable("MovieGenres"));
         
+        builder.HasMany(e => e.Events)
+            .WithMany(e => e.Movies)
+            .UsingEntity(t => t.ToTable("MovieEvents"));
         
-
-
-
 
     }
 }

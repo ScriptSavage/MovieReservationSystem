@@ -14,6 +14,7 @@ public sealed class Movie
     
     public int MinimumAgeRecruitment { get; set; }
 
+    public ICollection<Event> Events { get; set; } = [];
 
     public ICollection<Genre> Genres { get; set; } = [];
 
