@@ -53,4 +53,12 @@ public class AuthController : ControllerBase
     {
         return Ok("you are user");
     }
+
+
+    [HttpGet("admin-test")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult GetAdmin()
+    {
+        return Ok("you are admin");
+    }
 }
