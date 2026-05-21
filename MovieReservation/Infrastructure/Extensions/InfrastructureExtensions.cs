@@ -37,6 +37,8 @@ public static class InfrastructureExtensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IMovieResepository, MovieResepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }
