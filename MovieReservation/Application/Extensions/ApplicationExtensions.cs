@@ -10,6 +10,8 @@ public static class ApplicationExtensions
     public static void AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMovieService, MovieService>();
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly,includeInternalTypes:true);
     }
 }
