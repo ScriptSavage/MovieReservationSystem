@@ -18,9 +18,15 @@ public class GlobalErrorHandlingMiddleware : IMiddleware
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         }
+        catch (ArgumentException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            Console.WriteLine(e.Message);
+        }
         catch (Exception e)
         {
             Console.WriteLine("Something went wrong");
+            Console.WriteLine(e);
             context.Response.StatusCode = 500;
         }
     }
