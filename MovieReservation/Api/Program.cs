@@ -21,6 +21,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 await app.Services.SeedRolesAsync();
+await app.Services.SeedAdminAsync();
 
 if (app.Environment.IsDevelopment())
 {
