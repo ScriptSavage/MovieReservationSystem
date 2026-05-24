@@ -9,4 +9,6 @@ public interface IGenreService
     Task <GenreDto.Response> GetGenre(long id);
     Task<IEnumerable<GenreDto.Response>> GetAllGenres();
     Task RemoveGenre(long genreId);
+    
+    Task UpdateGenre(long id, GenreDto.Request dto);
 }

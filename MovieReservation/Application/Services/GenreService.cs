@@ -1,5 +1,6 @@
 using Application.Abstraction;
 using Application.Dto.Genre;
+using Application.Exceptions;
 using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
@@ -10,12 +11,15 @@ public class GenreService : IGenreService
 {
     private readonly IGenreRepository _genreRepository;
     private readonly IValidator<GenreDto.Request> _genreDtoValidator;
+    private readonly IUnitOfWork _unitOfWork;
 
     public GenreService(IGenreRepository genreRepository,
-        IValidator<GenreDto.Request> genreDtoValidator)
+        IValidator<GenreDto.Request> genreDtoValidator,
+        IUnitOfWork unitOfWork)
     {
         _genreRepository = genreRepository;
         _genreDtoValidator = genreDtoValidator;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task AddGenre(GenreDto.Request genre)
@@ -45,5 +49,21 @@ public class GenreService : IGenreService
     public async Task RemoveGenre(long genreId)
     {
         await _genreRepository.DeleteGenre(genreId);
+    }
+
+    public async Task UpdateGenre(long id, GenreDto.Request dto)
+    {
+        await _genreDtoValidator.ValidateAsync(dto);
+        
+        var genre = await _genreRepository.GetGenre(id);
+        
+        if (genre == null)
+        {
+            throw new DoesNotExistsException("Genre not found");
+        }
+
+        genre.GenreName = dto.Name;
+
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
     }
 }

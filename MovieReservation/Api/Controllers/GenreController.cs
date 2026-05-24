@@ -44,4 +44,12 @@ public class GenreController : ControllerBase
         await _genreService.RemoveGenre(id);
         return Ok("Genre deleted");
     }
+
+    [HttpPatch("{id:long}")]
+    public async Task<IActionResult> UpdateGenre(long id, [FromBody] GenreDto.Request dto)
+    {
+       await _genreService.UpdateGenre(id, dto);
+       return Ok("Genre updated");
+    }
+
 }
