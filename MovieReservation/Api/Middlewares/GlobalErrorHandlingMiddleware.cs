@@ -23,6 +23,10 @@ public class GlobalErrorHandlingMiddleware : IMiddleware
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             Console.WriteLine(e.Message);
         }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine(e.Message);
+        }
         catch (Exception e)
         {
             Console.WriteLine("Something went wrong");
