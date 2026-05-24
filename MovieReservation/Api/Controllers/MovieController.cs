@@ -37,4 +37,12 @@ public class MovieController : ControllerBase
         await _movieService.CreateMovie(createMovieRequest);
         return StatusCode(StatusCodes.Status201Created);
     }
+
+    [HttpDelete("{id:long}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteMovie(long id)
+    {
+        await _movieService.DeleteMovie(id);
+        return StatusCode(StatusCodes.Status204NoContent);
+    }
 }
