@@ -9,7 +9,9 @@ public interface IMovieResepository
 
     Task AddNewMovie(Movie movie);
     
-    Task<bool> DoesMovieExist(long id);
+    Task<bool> DoesMovieExist(string originalTitle);
+    
+    Task DeleteMovie(long id);
 
 
 }

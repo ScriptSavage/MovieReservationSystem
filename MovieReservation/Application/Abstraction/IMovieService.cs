@@ -10,4 +10,6 @@ public interface IMovieService
     Task<MovieDto.Response> GetMovie(long id);
     
     Task CreateMovie(MovieDto.CreateMovieRequest request);
+    
+    Task DeleteMovie(long id);
 }

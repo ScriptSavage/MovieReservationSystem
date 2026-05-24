@@ -66,7 +66,14 @@ public class MovieService : IMovieService
     public async Task CreateMovie(MovieDto.CreateMovieRequest request)
     {
         await _movieDtoValidator.ValidateAsync(request);
-        
+
+        var doesMovieExist = await _movieRepository.DoesMovieExist(request.OriginalTitle);
+
+        if (doesMovieExist)
+        {
+            throw new ArgumentException("Movie already exist.");
+        }
+
         var genreIds = request.GenresId
             .Distinct()
             .ToList();
@@ -96,5 +103,9 @@ public class MovieService : IMovieService
 
         await _movieRepository.AddNewMovie(newMovie);
     }
-    
+
+    public async Task DeleteMovie(long id)
+    {
+        await _movieRepository.DeleteMovie(id);
+    }
 }

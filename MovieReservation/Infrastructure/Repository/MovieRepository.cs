@@ -28,15 +28,22 @@ public class MovieRepository : IMovieResepository
             .Where(e=>e.MovieId == id)
             .FirstOrDefaultAsync();
     }
-
+    
     public async Task AddNewMovie(Movie movie)
     {
         await _context.Movies.AddAsync(movie);
         await _context.SaveChangesAsync();
     }
 
-    public Task<bool> DoesMovieExist(long id)
+    public Task<bool> DoesMovieExist(string originalTitle)
     {
-       return _context.Movies.AnyAsync(e => e.MovieId == id);
+       return _context.Movies.AnyAsync(e => e.OriginalTitle == originalTitle);
+    }
+
+    public async Task DeleteMovie(long id)
+    {
+        var movie = await _context.Movies.FindAsync(id);
+        if (movie != null) _context.Movies.Remove(movie);
+        await _context.SaveChangesAsync();
     }
 }
