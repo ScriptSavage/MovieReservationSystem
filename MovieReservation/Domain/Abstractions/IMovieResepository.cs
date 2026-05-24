@@ -6,7 +6,10 @@ public interface IMovieResepository
 {
     Task<List<Movie>> GetMoviesAsync();
     Task<Movie?> GetMovieAsync(long id);
+
+    Task AddNewMovie(Movie movie);
     
-    
-    
+    Task<bool> DoesMovieExist(long id);
+
+
 }

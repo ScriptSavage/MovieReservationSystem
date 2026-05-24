@@ -1,4 +1,6 @@
 using Application.Abstraction;
+using Application.Dto.Movie;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -26,5 +28,13 @@ public class MovieController : ControllerBase
     {
         var movie = await _movieService.GetMovie(id);
         return Ok(movie);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AddMovie([FromBody] MovieDto.CreateMovieRequest createMovieRequest)
+    {
+        await _movieService.CreateMovie(createMovieRequest);
+        return StatusCode(StatusCodes.Status201Created);
     }
 }
