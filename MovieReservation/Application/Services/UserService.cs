@@ -75,7 +75,10 @@ public class UserService : IUserService
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null) throw new DoesNotExistsException("User not found");
         
-        var userDetails = new UserDetailsDto(user.Email, user.FirstName, user.LastName, user.PhoneNumber);
+        var userDetails = new UserDetailsDto(user.Email,
+            user.FirstName, 
+            user.LastName, 
+            user.PhoneNumber);
         
         return userDetails;
     }
@@ -90,8 +93,8 @@ public class UserService : IUserService
         var result = userReservations.Select(e =>
             new ReservationDto(e.CreatedAt, e.ReservationCode, e.TotalPrice,
                 new EventDto(e.Event.StartDate,e.Event.EndDate, 
-                    new VenueDto(e.Event.Venue.Name,e.Event.Venue.City,e.Event.Venue.PostalCode,e.Event.Venue.Street))))
-            .ToList();
+                    new VenueDto(e.Event.Venue.Name,e.Event.Venue.City,
+                        e.Event.Venue.PostalCode,e.Event.Venue.Street)))).ToList();
         
         return result;
     }
