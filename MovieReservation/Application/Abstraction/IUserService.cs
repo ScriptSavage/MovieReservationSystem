@@ -1,3 +1,4 @@
+using Application.Dto;
 using Application.Dto.Auth;
 using Application.Dto.Reservation;
 using Application.Dto.User;
@@ -15,4 +16,6 @@ public interface IUserService
     Task<UserDetailsDto> GetUserDetailsAsync(string userId);
     
     Task<List<ReservationDto>> GetAllReservationsAsync(string userId);
+    
+    Task<PagedResult<UserReservationDto>> GetAllUsersReservationsAsync(int page, int pageSize);
 }

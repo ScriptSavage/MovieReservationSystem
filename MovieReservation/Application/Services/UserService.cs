@@ -1,4 +1,5 @@
 using Application.Abstraction;
+using Application.Dto;
 using Application.Dto.Auth;
 using Application.Dto.Event;
 using Application.Dto.Reservation;
@@ -16,15 +17,18 @@ public class UserService : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IReservationRepository _reservationRepository;
+    private readonly IUserRepository _userRepository;
 
     public UserService(
         UserManager<ApplicationUser> userManager,
         IUnitOfWork unitOfWork,
-        IReservationRepository reservationRepository)
+        IReservationRepository reservationRepository,
+        IUserRepository userRepository)
     {
         _userManager = userManager;
         _unitOfWork = unitOfWork;
         _reservationRepository = reservationRepository;
+        _userRepository = userRepository;
     }
 
     public async Task ChangePasswordAsync(string userId, ChangePasswordDto dto)
@@ -97,5 +101,44 @@ public class UserService : IUserService
                         e.Event.Venue.PostalCode,e.Event.Venue.Street)))).ToList();
         
         return result;
+    }
+
+    public async Task<PagedResult<UserReservationDto>> GetAllUsersReservationsAsync(int page, int pageSize)
+    {
+
+        var allUsers = await _userRepository.CountAllUsersAsync();
+        var allPages = (int)Math.Ceiling(allUsers / (double)pageSize);
+        
+        
+        var data = await _userRepository.GetUsersReservationsAsync(page, pageSize);
+
+        var result = data.Select(e => new UserReservationDto()
+        {
+            FirstName = e.FirstName,
+            LastName = e.LastName,
+            PhoneNumber = e.PhoneNumber,
+            Email = e.Email,
+            Reservations = e.Reservations.Select(x=> 
+                new ReservationDto(x.CreatedAt,
+                    x.ReservationCode,
+                    x.TotalPrice,
+                    new EventDto(x.Event.StartDate, 
+                        x.Event.EndDate,
+                        new VenueDto(x.Event.Venue.Name,
+                            x.Event.Venue.City,
+                            x.Event.Venue.PostalCode,
+                            x.Event.Venue.Street))))
+                .ToList()
+        }).ToList();
+
+        
+        return new PagedResult<UserReservationDto>
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = allUsers,
+            TotalPages = allPages,
+            Items = result
+        };
     }
 }
