@@ -11,5 +11,11 @@ public interface IMovieService
     
     Task CreateMovie(MovieDto.CreateMovieRequest request);
     
-    Task DeleteMovie(long id);
+    Task DeleteMovieAsync(long id);
+    
+    Task UpdateMovieAsync(long id, MovieDto.UpdateMovieTitle request);
+    
+    Task AddGenreToMovie(long id, long genreId);
+    
+    Task DeleteGenreFromMovieAsync(long id, long genreId);
 }

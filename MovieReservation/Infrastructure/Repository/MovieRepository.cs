@@ -40,10 +40,14 @@ public class MovieRepository : IMovieResepository
        return _context.Movies.AnyAsync(e => e.OriginalTitle == originalTitle);
     }
 
+    public async Task<bool> DoesMovieExist(long id)
+    {
+        return await _context.Movies.AnyAsync(e => e.MovieId == id);
+    }
+
     public async Task DeleteMovie(long id)
     {
         var movie = await _context.Movies.FindAsync(id);
-        if (movie != null) _context.Movies.Remove(movie);
-        await _context.SaveChangesAsync();
+        _context.Movies.Remove(movie);
     }
 }

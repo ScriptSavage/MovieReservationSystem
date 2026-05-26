@@ -1,6 +1,7 @@
 using Application.Abstraction;
 using Application.Dto.Genre;
 using Application.Dto.Movie;
+using Application.Exceptions;
 using Domain.Abstractions;
 using Domain.Entities;
 using FluentValidation;
@@ -12,14 +13,20 @@ public class MovieService : IMovieService
     private readonly IMovieResepository _movieRepository;
     private readonly IGenreRepository _genreRepository;
     private readonly IValidator<MovieDto.CreateMovieRequest> _movieDtoValidator;
+    private readonly IValidator<MovieDto.UpdateMovieTitle> _movieTitleValidator;
+    private readonly IUnitOfWork _unitOfWork;
 
     public MovieService(IMovieResepository movieRepository, 
         IGenreRepository genreRepository,
-        IValidator<MovieDto.CreateMovieRequest> movieDtoValidator)
+        IValidator<MovieDto.CreateMovieRequest> movieDtoValidator,
+        IValidator<MovieDto.UpdateMovieTitle> movieTitleValidator,
+        IUnitOfWork unitOfWork)
     {
         _movieRepository = movieRepository;
         _genreRepository = genreRepository;
         _movieDtoValidator = movieDtoValidator;
+        _movieTitleValidator = movieTitleValidator;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<MovieDto.Response>> GetAllMovies()
@@ -66,14 +73,7 @@ public class MovieService : IMovieService
     public async Task CreateMovie(MovieDto.CreateMovieRequest request)
     {
         await _movieDtoValidator.ValidateAsync(request);
-
-        var doesMovieExist = await _movieRepository.DoesMovieExist(request.OriginalTitle);
-
-        if (doesMovieExist)
-        {
-            throw new ArgumentException("Movie already exist.");
-        }
-
+        
         var genreIds = request.GenresId
             .Distinct()
             .ToList();
@@ -104,8 +104,65 @@ public class MovieService : IMovieService
         await _movieRepository.AddNewMovie(newMovie);
     }
 
-    public async Task DeleteMovie(long id)
+    public async Task DeleteMovieAsync(long id)
     {
+        var doesMovieExist = await _movieRepository.DoesMovieExist(id);
+        if (!doesMovieExist)
+        {
+            throw new DoesNotExistsException("Movie not found.");
+        }
+        
         await _movieRepository.DeleteMovie(id);
+    }
+
+    public async Task UpdateMovieAsync(long id, MovieDto.UpdateMovieTitle request)
+    {
+        var validationResult = await _movieTitleValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            string errors = validationResult.Errors.First().ErrorMessage;
+            throw new ValidationException(errors);
+        }
+        var doesMovieExist = await _movieRepository.DoesMovieExist(id);
+        if (!doesMovieExist)
+        {
+            throw new DoesNotExistsException("Movie not found.");
+        }
+
+        var movie = await _movieRepository.GetMovieAsync(id);
+
+        movie.Title = request.NewTitle;
+        
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task AddGenreToMovie(long id, long genreId)
+    {
+        var doesMovieExist = await _movieRepository.DoesMovieExist(id);
+        var doesGenreExists = await _genreRepository.DoesGenreExist(genreId);
+        if (!doesMovieExist || !doesGenreExists)
+        {
+            throw new DoesNotExistsException("Movie or Genre not found.");
+        }
+        
+        var movie = await _movieRepository.GetMovieAsync(id);
+        var genre = await _genreRepository.GetGenre(genreId);
+        
+        movie.Genres.Add(genre);
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task DeleteGenreFromMovieAsync(long id, long genreId)
+    {
+        var doesMovieExist = await _movieRepository.DoesMovieExist(id);
+        var doesGenreExists = await _genreRepository.DoesGenreExist(genreId);
+        if (!doesMovieExist || !doesGenreExists)
+        {
+            throw new DoesNotExistsException("Movie or Genre not found.");
+        }
+        var movie = await _movieRepository.GetMovieAsync(id);
+        var genre = await _genreRepository.GetGenre(genreId);
+        
+        movie.Genres.Remove(genre);
     }
 }
