@@ -13,6 +13,7 @@ public static class ApplicationExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<IEventService, EventService>();
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly,includeInternalTypes:true);
     }
 }

@@ -40,6 +40,8 @@ public static class InfrastructureExtensions
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IMovieResepository, MovieRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IVenueRepository, VenueRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }

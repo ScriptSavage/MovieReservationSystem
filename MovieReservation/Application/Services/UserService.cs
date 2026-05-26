@@ -96,7 +96,7 @@ public class UserService : IUserService
 
         var result = userReservations.Select(e =>
             new ReservationDto(e.CreatedAt, e.ReservationCode, e.TotalPrice,
-                new EventDto(e.Event.StartDate,e.Event.EndDate, 
+                new EventDto(e.Event.Name,e.Event.StartDate,e.Event.EndDate, 
                     new VenueDto(e.Event.Venue.Name,e.Event.Venue.City,
                         e.Event.Venue.PostalCode,e.Event.Venue.Street)))).ToList();
         
@@ -122,7 +122,8 @@ public class UserService : IUserService
                 new ReservationDto(x.CreatedAt,
                     x.ReservationCode,
                     x.TotalPrice,
-                    new EventDto(x.Event.StartDate, 
+                    new EventDto(x.Event.Name,
+                        x.Event.StartDate, 
                         x.Event.EndDate,
                         new VenueDto(x.Event.Venue.Name,
                             x.Event.Venue.City,
