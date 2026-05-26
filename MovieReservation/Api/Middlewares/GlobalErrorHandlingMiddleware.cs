@@ -1,4 +1,5 @@
 ﻿using Application.Exceptions;
+using FluentValidation;
 
 namespace Api.Middlewares;
 
@@ -19,6 +20,11 @@ public class GlobalErrorHandlingMiddleware : IMiddleware
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         }
         catch (ArgumentException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            Console.WriteLine(e.Message);
+        }
+        catch (ValidationException e)
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             Console.WriteLine(e.Message);
