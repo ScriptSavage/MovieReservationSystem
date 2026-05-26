@@ -20,4 +20,11 @@ public static class MovieDto
         DateTime ReleaseYear,
         int MinimumAgeRecruitment,
         List<long> GenresId);
+    
+    public record MinimumResponse( 
+        string Title,
+        string Description);
+    
+    
+    public record UpdateMovieTitle(string NewTitle);
 }
