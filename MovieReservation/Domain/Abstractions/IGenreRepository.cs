@@ -8,6 +8,6 @@ public interface IGenreRepository
     Task<Genre?> GetGenre(long id);
     Task DeleteGenre(long id);
     Task<IEnumerable<Genre>> GetGenres();
-    
     Task<List<Genre>> GetGenresByIdsAsync(IEnumerable<long> ids);
+    Task<bool> DoesGenreExist(long id);
 }

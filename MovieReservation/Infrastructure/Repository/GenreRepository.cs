@@ -35,6 +35,11 @@ public class GenreRepository : IGenreRepository
             .ToListAsync();
     }
 
+    public async Task<bool> DoesGenreExist(long id)
+    {
+        return await _context.Genres.AnyAsync(g => g.GenreId == id);
+    }
+
     public async Task DeleteGenre(long id)
     {
         var genre = await _context.Genres.FindAsync(id);
