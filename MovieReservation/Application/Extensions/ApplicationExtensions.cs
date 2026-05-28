@@ -14,6 +14,7 @@ public static class ApplicationExtensions
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IReservationService, ReservationsService>();
         services.AddValidatorsFromAssembly(typeof(ApplicationExtensions).Assembly,includeInternalTypes:true);
     }
 }
