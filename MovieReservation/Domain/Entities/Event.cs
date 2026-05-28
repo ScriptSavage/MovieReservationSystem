@@ -16,6 +16,5 @@ public sealed class Event
     public long VenueId { get; set; }
 
     public ICollection<TicketType> TicketTypes { get; set; } = [];
-    public long TicketTypeId { get; set; }
 
 }
