@@ -14,7 +14,7 @@ public class ReservationRepository : IReservationRepository
         _context = context;
     }
 
-    public async Task<List<Reservation>> GetReservationsAsync(string userId)
+    public async Task<List<Reservation>> GetUserReservationsAsync(string userId)
     {
         var data = await _context.Reservations
             .Include(e=>e.Event)
@@ -24,5 +24,17 @@ public class ReservationRepository : IReservationRepository
             .ToListAsync();
         
         return data;
+    }
+
+    public async Task<ICollection<Reservation>> GetAllReservationsAsync(int page, int pageSize)
+    {
+        return await _context.Reservations
+            .Include(e=>e.User)
+            .Include(e=>e.Event)
+            .OrderBy(x=>x.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

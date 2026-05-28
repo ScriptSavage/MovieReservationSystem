@@ -92,7 +92,7 @@ public class UserService : IUserService
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null) throw new DoesNotExistsException("User not found");
 
-        var userReservations = await _reservationRepository.GetReservationsAsync(userId);
+        var userReservations = await _reservationRepository.GetUserReservationsAsync(userId);
 
         var result = userReservations.Select(e =>
             new ReservationDto(e.CreatedAt, e.ReservationCode, e.TotalPrice,
