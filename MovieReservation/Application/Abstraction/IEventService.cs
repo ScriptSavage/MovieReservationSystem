@@ -11,4 +11,9 @@ public interface IEventService
     Task AddMovieToEventAsync(long eventId, long movieId);
     
     Task<PagedResult<EventDetailsDto>> GetAllEventsAsync(int page, int pageSize);
+    
+    Task<EventDetailsDto> GetEventDetailsAsync(long eventId);
+    
+    Task DeleteEventAsync(long eventId);
+    Task UpdateEventDetailsAsync(long eventId, EventDto dto);
 }

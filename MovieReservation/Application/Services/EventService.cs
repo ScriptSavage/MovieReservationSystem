@@ -33,32 +33,34 @@ public class EventService : IEventService
     {
         var transaction = await _unitOfWork.BeginTransactionAsync(IsolationLevel.Serializable);
         
-        var newEvent = new Event()
-        {
-            Name = dto.Name,
-            TotalCapacity = dto.TotalCapacity,
-            StartDate = dto.StartDate,
-            EndDate = dto.EndDate,
-        };
-        
-        var newVenue = new Venue()
-        {
-            Name = dto.Venue.Name,
-            Street = dto.Venue.Street,
-            City = dto.Venue.City,
-            PostalCode = dto.Venue.PostalCode,
-        };
-        
         try
         {
-            newEvent.VenueId = newVenue.VenueId;
+            var newVenue = new Venue()
+            {
+                Name = dto.Venue.Name,
+                Street = dto.Venue.Street,
+                City = dto.Venue.City,
+                PostalCode = dto.Venue.PostalCode,
+            };
+        
+            var newEvent = new Event()
+            {
+                Name = dto.Name,
+                TotalCapacity = dto.TotalCapacity,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                Venue = newVenue
+            };
+            
            await _eventRepository.AddNewEvent(newEvent);
            await _venueRepository.AddNewVenue(newVenue);
+           await _unitOfWork.SaveChangesAsync(CancellationToken.None);
            transaction.Commit();
         }
         catch (Exception e)
         {
             transaction.Rollback();
+            Console.WriteLine(e.Message);
         }
     }
 
@@ -85,9 +87,15 @@ public class EventService : IEventService
         var allPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
         var eventDetailsResult = data.Select(e =>
-            new EventDetailsDto(e.Name, e.StartDate, e.EndDate,
-                new VenueDto(e.Venue.Name, e.Venue.City, e.Venue.PostalCode,e.Venue.Street),
-                e.Movies.Select(x=> new MovieDto.MinimumResponse(x.Title,x.Description))
+            new EventDetailsDto(e.Name, 
+                e.StartDate, 
+                e.EndDate,
+                new VenueDto(e.Venue.Name, 
+                    e.Venue.City, 
+                    e.Venue.PostalCode,
+                    e.Venue.Street),
+                e.Movies.Select(x=> 
+                        new MovieDto.MinimumResponse(x.Title,x.Description))
                     .ToList()))
             .ToList();
 
@@ -104,5 +112,61 @@ public class EventService : IEventService
         return result;
     }
 
-   
+    public async Task<EventDetailsDto> GetEventDetailsAsync(long eventId)
+    {
+        var doesEventExist = await _eventRepository.DoesEventExist(eventId);
+        if (!doesEventExist)
+        {
+            throw new DoesNotExistsException("Event doesn't exist");
+        }
+
+        var eventEntity = await _eventRepository.GetEventDetails(eventId);
+
+        var enventDetails = new EventDetailsDto(eventEntity.Name, 
+            eventEntity.StartDate, 
+            eventEntity.EndDate,
+            new VenueDto(eventEntity.Venue.Name, 
+                eventEntity.Venue.City, 
+                eventEntity.Venue.PostalCode,
+                eventEntity.Venue.Street),
+            eventEntity.Movies.Select(x => 
+                new MovieDto.MinimumResponse(x.Title, x.Description)));
+        
+        return enventDetails;
+    }
+
+    public async Task DeleteEventAsync(long eventId)
+    {
+        var eventEntity = await _eventRepository.GetEvent(eventId);
+        
+        if (eventEntity == null)
+        {
+            throw new DoesNotExistsException("Event doesn't exist");
+        }
+
+        await _eventRepository.DeleteEvent(eventEntity);
+    }
+
+    public async Task UpdateEventDetailsAsync(long eventId ,EventDto dto)
+    {
+        var doesEventExist = await _eventRepository.DoesEventExist(eventId);
+        if (!doesEventExist)
+        {
+            throw new DoesNotExistsException("Event doesn't exist");
+        }
+
+        var eventEntity = await _eventRepository.GetEvent(eventId);
+
+        if (string.IsNullOrWhiteSpace(dto.EventName)) eventEntity.Name = dto.EventName;
+        if (dto.StartDate >= dto.EndDate || eventEntity.StartDate != default) eventEntity.StartDate = dto.StartDate;
+        if (dto.EndDate <= dto.StartDate || eventEntity.StartDate != default) eventEntity.EndDate = dto.EndDate;
+        
+        if (string.IsNullOrWhiteSpace(dto.Venue.Name)) eventEntity.Venue.Name = dto.Venue.Name;
+        if (string.IsNullOrWhiteSpace(dto.Venue.City)) eventEntity.Venue.City = dto.Venue.City;
+        if (string.IsNullOrWhiteSpace(dto.Venue.PostalCode)) eventEntity.Venue.PostalCode = dto.Venue.PostalCode;
+        if (string.IsNullOrWhiteSpace(dto.Venue.Street)) eventEntity.Venue.Street = dto.Venue.Street;
+
+            
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+    }
 }
