@@ -17,7 +17,6 @@ public sealed class Reservation
 
 
     public ICollection<Ticket> Tickets { get; set; } = [];
-    public long TicketId { get; set; }
     
     public Guid ReservationCode { get; set; } =  Guid.NewGuid();
 
