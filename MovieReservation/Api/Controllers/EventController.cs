@@ -17,11 +17,20 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetEvents([FromQuery] int page, [FromQuery] int pageSize)
+    public async Task<IActionResult> GetEvents([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var result = await _eventService.GetAllEventsAsync(page, pageSize);
         return Ok(result);
     }
+
+    
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetEventDetails(long id)
+    {
+        var eventDetails = await _eventService.GetEventDetailsAsync(id);
+        return Ok(eventDetails);
+    }
+
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
@@ -37,5 +46,23 @@ public class EventController : ControllerBase
     {
         await _eventService.AddMovieToEventAsync(eventId, movieId);
         return Ok(new { message = "Movie was added successfully" });
+    }
+
+
+    [HttpDelete("{eventId:long}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteEvent(long eventId)
+    {
+        await _eventService.DeleteEventAsync(eventId);
+        return Ok(new {message = "Event was deleted successfully" });
+    }
+
+
+    [HttpPut("{eventId:long}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateEvent(long eventId, [FromBody] EventDto dto)
+    {
+        await _eventService.UpdateEventDetailsAsync(eventId, dto);
+        return Ok(new { message = "Event was updated successfully" });
     }
 }
