@@ -8,7 +8,7 @@ public sealed class TicketTypeConfiguration : IEntityTypeConfiguration<TicketTyp
 {
     public void Configure(EntityTypeBuilder<TicketType> builder)
     {
-        builder.HasKey(e => e.TickerTypeId);
+        builder.HasKey(e => e.TicketTypeId);
         
         builder.Property(e=>e.Name)
             .HasMaxLength(150)
