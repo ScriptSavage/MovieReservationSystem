@@ -4,5 +4,7 @@ namespace Domain.Abstractions;
 
 public interface IReservationRepository
 {
-    Task<List<Reservation>> GetReservationsAsync(string userId);
+    Task<List<Reservation>> GetUserReservationsAsync(string userId);
+    
+    Task<ICollection<Reservation>> GetAllReservationsAsync(int page, int pageSize);
 }

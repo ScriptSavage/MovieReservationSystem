@@ -7,7 +7,6 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/genres")]
-[Authorize(Roles = "Admin")]
 public class GenreController : ControllerBase
 {
     private readonly IGenreService _genreService;
@@ -32,6 +31,7 @@ public class GenreController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AddGenre([FromBody] GenreDto.Request genre)
     {
         await _genreService.AddGenre(genre);
@@ -39,6 +39,7 @@ public class GenreController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteGenre(long id)
     {
         await _genreService.RemoveGenre(id);
@@ -46,6 +47,7 @@ public class GenreController : ControllerBase
     }
 
     [HttpPatch("{id:long}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateGenre(long id, [FromBody] GenreDto.Request dto)
     {
        await _genreService.UpdateGenre(id, dto);
