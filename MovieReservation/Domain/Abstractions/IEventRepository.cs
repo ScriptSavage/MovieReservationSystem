@@ -5,7 +5,7 @@ namespace Domain.Abstractions;
 public interface IEventRepository
 {
     
-    Task <IEnumerable<Event>> GetEvents(int pageSize, int pageNumber);
+    Task <IEnumerable<Event>> GetEvents(int pagr, int pageNumber);
     
     Task AddNewEvent(Event eventEntity);
     
@@ -14,4 +14,8 @@ public interface IEventRepository
     Task<bool> DoesEventExist(long eventId);
     
     Task<int> CountEvents();
+    
+    Task DeleteEvent(Event eventEntity);
+    
+    Task<Event> GetEventDetails(long eventId);
 }
