@@ -11,8 +11,8 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
     }
-    
 
+    
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Genre> Genres { get; set; }
@@ -20,7 +20,9 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
     public DbSet<Event> Events { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
-    public DbSet<RefreshToken?> RefreshTokens { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+    public DbSet<TicketType> TicketTypes { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

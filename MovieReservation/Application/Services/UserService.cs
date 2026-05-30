@@ -87,7 +87,7 @@ public class UserService : IUserService
         return userDetails;
     }
 
-    public async Task<List<ReservationDto>> GetAllReservationsAsync(string userId)
+    public async Task<List<ReservationDtoDetails>> GetAllReservationsAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null) throw new DoesNotExistsException("User not found");
@@ -95,7 +95,7 @@ public class UserService : IUserService
         var userReservations = await _reservationRepository.GetUserReservationsAsync(userId);
 
         var result = userReservations.Select(e =>
-            new ReservationDto(e.CreatedAt, e.ReservationCode, e.TotalPrice,
+            new ReservationDtoDetails(e.CreatedAt, e.ReservationCode, e.TotalPrice,
                 new EventDto(e.Event.Name,e.Event.StartDate,e.Event.EndDate, 
                     new VenueDto(e.Event.Venue.Name,e.Event.Venue.City,
                         e.Event.Venue.PostalCode,e.Event.Venue.Street)))).ToList();
@@ -121,15 +121,7 @@ public class UserService : IUserService
             Reservations = e.Reservations.Select(x=> 
                 new ReservationDto(x.CreatedAt,
                     x.ReservationCode,
-                    x.TotalPrice,
-                    new EventDto(x.Event.Name,
-                        x.Event.StartDate, 
-                        x.Event.EndDate,
-                        new VenueDto(x.Event.Venue.Name,
-                            x.Event.Venue.City,
-                            x.Event.Venue.PostalCode,
-                            x.Event.Venue.Street))))
-                .ToList()
+                    x.TotalPrice)).ToList()
         }).ToList();
 
         

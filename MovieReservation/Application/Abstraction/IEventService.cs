@@ -1,6 +1,6 @@
 using Application.Dto;
 using Application.Dto.Event;
-using Domain.Entities;
+using Application.Dto.TicketType;
 
 namespace Application.Abstraction;
 
@@ -16,4 +16,10 @@ public interface IEventService
     
     Task DeleteEventAsync(long eventId);
     Task UpdateEventDetailsAsync(long eventId, EventDto dto);
+    
+    Task AddTicketTypesToEventAsync(long eventId, TicketTypeDto dto);
+    
+    Task<EventTicketTypesDto> GetEventTicketTypesAsync(long eventId);
+    
+    Task DeleteTicketTypeAsync(long eventId, long ticketTypeId);
 }

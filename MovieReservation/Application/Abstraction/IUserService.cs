@@ -15,7 +15,7 @@ public interface IUserService
     
     Task<UserDetailsDto> GetUserDetailsAsync(string userId);
     
-    Task<List<ReservationDto>> GetAllReservationsAsync(string userId);
+    Task<List<ReservationDtoDetails>> GetAllReservationsAsync(string userId);
     
     Task<PagedResult<UserReservationDto>> GetAllUsersReservationsAsync(int page, int pageSize);
 }

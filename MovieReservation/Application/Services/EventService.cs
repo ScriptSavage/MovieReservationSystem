@@ -3,6 +3,7 @@ using Application.Abstraction;
 using Application.Dto;
 using Application.Dto.Event;
 using Application.Dto.Movie;
+using Application.Dto.TicketType;
 using Application.Dto.Venue;
 using Application.Exceptions;
 using Domain.Abstractions;
@@ -15,17 +16,20 @@ public class EventService : IEventService
     private readonly IEventRepository _eventRepository;
     private readonly IVenueRepository _venueRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMovieResepository _movieResepository;
+    private readonly IMovieResepository _movieRepository;
+    private readonly ITicketTypeRepository _ticketTypeRepository;
 
     public EventService(IEventRepository eventRepository, 
         IVenueRepository venueRepository, 
         IUnitOfWork unitOfWork,
-        IMovieResepository movieResepository)
+        IMovieResepository movieRepository,
+        ITicketTypeRepository ticketTypeRepository)
     {
         _eventRepository = eventRepository;
         _venueRepository = venueRepository;
         _unitOfWork = unitOfWork;
-        _movieResepository = movieResepository;
+        _movieRepository = movieRepository;
+        _ticketTypeRepository = ticketTypeRepository;
     }
 
 
@@ -67,13 +71,13 @@ public class EventService : IEventService
     public async Task AddMovieToEventAsync(long eventId, long movieId)
     {
         var eventEntity = await _eventRepository.GetEvent(eventId);
-        var doesMovieExist = await _movieResepository.DoesMovieExist(movieId);
+        var doesMovieExist = await _movieRepository.DoesMovieExist(movieId);
         if (!doesMovieExist)
         {
             throw new DoesNotExistsException("Movie doesn't exist");
         }
 
-        var movieEntity = await _movieResepository.GetMovieAsync(movieId);
+        var movieEntity = await _movieRepository.GetMovieAsync(movieId);
         
         eventEntity.Movies.Add(movieEntity);
     }
@@ -167,6 +171,64 @@ public class EventService : IEventService
         if (string.IsNullOrWhiteSpace(dto.Venue.Street)) eventEntity.Venue.Street = dto.Venue.Street;
 
             
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task AddTicketTypesToEventAsync(long eventId, TicketTypeDto dto)
+    {
+        var doesEventExist = await _eventRepository.DoesEventExist(eventId);
+
+        if (!doesEventExist)
+        {
+            throw new DoesNotExistsException("Event doesn't exist");
+        }
+        
+        var eventEntity = await _eventRepository.GetEvent(eventId);
+
+        var newTicketType = new TicketType()
+        {
+            Name = dto.Name,
+            Price = dto.Price,
+            Capacity = dto.Capacity
+        };
+
+        eventEntity.TicketTypes.Add(newTicketType);
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task<EventTicketTypesDto> GetEventTicketTypesAsync(long eventId)
+    {
+        var data = await _eventRepository.GetEventTicketTypes(eventId);
+        
+        var result = new EventTicketTypesDto(
+            data.Name,
+            data.TicketTypes.Select(e=> 
+                new TicketTypeDto(e.Name,
+                    e.Price,
+                    e.Capacity)).ToList());
+        
+        return result;
+    }
+
+    public async Task DeleteTicketTypeAsync(long eventId, long ticketTypeId)
+    {
+        var doesEventExists = await _eventRepository.DoesEventExist(eventId);
+        if (!doesEventExists)
+        {
+            throw new DoesNotExistsException("Event doesn't exist");
+        }
+        
+        var doesTicketTypeExist = await _ticketTypeRepository.DoesTicketTypeExist(ticketTypeId);
+        if (!doesTicketTypeExist)
+        {
+            throw new DoesNotExistsException("Ticket doesn't exist");
+        }
+
+        var eventEntity = await _eventRepository.GetEvent(eventId);
+        
+        var ticketEntity = await _ticketTypeRepository.GetTicketType(ticketTypeId);
+        
+        eventEntity.TicketTypes.Remove(ticketEntity);
         await _unitOfWork.SaveChangesAsync(CancellationToken.None);
     }
 }

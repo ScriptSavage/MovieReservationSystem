@@ -37,4 +37,15 @@ public class ReservationRepository : IReservationRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<Reservation> GetReservationAsync(long id)
+    {
+        var reservation = await _context.Reservations
+            .Include(e=>e.User)
+            .FirstOrDefaultAsync(e => e.ReservationId == id);
+
+        return reservation;
+    }
+    
+    public async Task<bool> DoesReservationExistAsync(long id)=> await _context.Reservations.AnyAsync(e=>e.ReservationId == id);
 }

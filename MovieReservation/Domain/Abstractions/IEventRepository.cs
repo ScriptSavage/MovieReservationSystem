@@ -18,4 +18,6 @@ public interface IEventRepository
     Task DeleteEvent(Event eventEntity);
     
     Task<Event> GetEventDetails(long eventId);
+    
+    Task<Event> GetEventTicketTypes(long eventId);
 }

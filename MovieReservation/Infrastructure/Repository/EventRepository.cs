@@ -62,4 +62,12 @@ public class EventRepository : IEventRepository
        
         return eventEntity;
     }
+
+    public async Task<Event> GetEventTicketTypes(long eventId)
+    {
+        return await _context.Events
+            .Include(e=>e.TicketTypes)
+            .FirstOrDefaultAsync(e=>e.EventId == eventId);
+        
+    }
 }

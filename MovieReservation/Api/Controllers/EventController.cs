@@ -1,5 +1,6 @@
 using Application.Abstraction;
 using Application.Dto.Event;
+using Application.Dto.TicketType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,14 @@ public class EventController : ControllerBase
         return Ok(eventDetails);
     }
 
+    [HttpGet("{eventId:long}/tickets-types")]
+    public async Task<IActionResult> GetEventTicketTypes(long eventId)
+    {
+        var result = await _eventService.GetEventTicketTypesAsync(eventId);
+        return Ok(result);
+    }
+
+
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
@@ -48,6 +57,15 @@ public class EventController : ControllerBase
         return Ok(new { message = "Movie was added successfully" });
     }
 
+    [HttpPost("{eventId:long}/ticket-types")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AddNewTicketTypeToEventAsync(long eventId,[FromBody] TicketTypeDto dto)
+    {
+        await _eventService.AddTicketTypesToEventAsync(eventId, dto);
+        return Ok(new  { message = "Ticket type was added successfully" });
+    }
+
+
 
     [HttpDelete("{eventId:long}")]
     [Authorize(Roles = "Admin")]
@@ -55,6 +73,15 @@ public class EventController : ControllerBase
     {
         await _eventService.DeleteEventAsync(eventId);
         return Ok(new {message = "Event was deleted successfully" });
+    }
+
+    
+    [HttpDelete("{eventId:long}/ticket-types/{ticketTypeId:long}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteEventTicketTypes(long eventId, long ticketTypeId)
+    {
+        await _eventService.DeleteTicketTypeAsync(eventId, ticketTypeId);
+        return Ok(new { message = "Ticket type was deleted successfully" });
     }
 
 

@@ -4,6 +4,7 @@ using Application.Dto.Event;
 using Application.Dto.Reservation;
 using Application.Dto.User;
 using Application.Dto.Venue;
+using Application.Exceptions;
 using Domain.Abstractions;
 
 namespace Application.Services;
@@ -34,15 +35,7 @@ public class ReservationsService : IReservationService
             Reservations = reservations.Select(x=>
                 new ReservationDto(x.CreatedAt,
                     x.ReservationCode,
-                    x.TotalPrice,
-                new EventDto(x.Event.Name,
-                    x.Event.StartDate,
-                    x.Event.EndDate,
-                    new VenueDto(x.Event.Venue.Name,
-                        x.Event.Venue.City,
-                        x.Event.Venue.PostalCode,
-                        x.Event.Venue.Street))))
-                .ToList()
+                    x.TotalPrice)).ToList()
         }).ToList();
 
 
@@ -57,5 +50,35 @@ public class ReservationsService : IReservationService
 
         
         return pagedResult;
+    }
+
+    public async Task<UserReservationDetailsDto> GetReservation(long id)
+    {
+        var doesReservationExists = await _reservationRepository.DoesReservationExistAsync(id);
+        if (!doesReservationExists)
+        {
+            throw new DoesNotExistsException("Reservation not found");
+        }
+
+        var reservation = await _reservationRepository.GetReservationAsync(id);
+
+        var result = new UserReservationDetailsDto(
+            new UserDetailsDto(reservation.User.Email,
+                reservation.User.FirstName,
+                reservation.User.LastName,
+                reservation.User.PhoneNumber),
+            new ReservationDto(reservation.CreatedAt, 
+                reservation.ReservationCode, 
+                reservation.TotalPrice),
+            new EventDto(reservation.Event.Name,
+                reservation.Event.StartDate,
+                reservation.Event.EndDate,
+                new VenueDto(reservation.Event.Venue.Name,
+                    reservation.Event.Venue.City,
+                    reservation.Event.Venue.PostalCode,
+                    reservation.Event.Venue.Street)));
+        
+        
+        return result;
     }
 }

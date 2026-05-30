@@ -42,6 +42,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IVenueRepository, VenueRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }
