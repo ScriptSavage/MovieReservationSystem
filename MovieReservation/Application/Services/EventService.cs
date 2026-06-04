@@ -80,6 +80,7 @@ public class EventService : IEventService
         var movieEntity = await _movieRepository.GetMovieAsync(movieId);
         
         eventEntity.Movies.Add(movieEntity);
+        await _unitOfWork.SaveChangesAsync(CancellationToken.None);
     }
 
     

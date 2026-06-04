@@ -9,4 +9,6 @@ public interface IReservationService
     Task<PagedResult<UserReservationDto>> GetReservations(int page, int pageSize);
     
     Task<UserReservationDetailsDto> GetReservation(long id);
+    
+    Task CreateReservationAsync(string UserId, CreateReservationDto createReservationDto);
 }

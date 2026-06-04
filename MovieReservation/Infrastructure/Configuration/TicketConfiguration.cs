@@ -8,7 +8,6 @@ public sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 {
     public void Configure(EntityTypeBuilder<Ticket> builder)
     {
-        builder.HasKey(e => e.ReservationId);
-        
+        builder.HasKey(e => e.TicketId);
     }
 }

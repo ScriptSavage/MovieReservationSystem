@@ -31,6 +31,6 @@ public sealed class TicketTypeConfiguration : IEntityTypeConfiguration<TicketTyp
             .WithOne(e=>e.TicketType)
             .HasForeignKey(e=>e.TicketTypeId)
             .OnDelete(DeleteBehavior.NoAction);
-            
+        
     }
 }

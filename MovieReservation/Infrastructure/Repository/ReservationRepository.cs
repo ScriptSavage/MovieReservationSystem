@@ -48,4 +48,9 @@ public class ReservationRepository : IReservationRepository
     }
     
     public async Task<bool> DoesReservationExistAsync(long id)=> await _context.Reservations.AnyAsync(e=>e.ReservationId == id);
+    public async Task AddNewReservationAsync(Reservation reservation)
+    {
+        await _context.AddAsync(reservation);
+        await _context.SaveChangesAsync();
+    }
 }

@@ -11,4 +11,6 @@ public interface IReservationRepository
     Task<Reservation> GetReservationAsync(long id);
     
     Task<bool> DoesReservationExistAsync(long id);
+    
+    Task AddNewReservationAsync(Reservation reservation);
 }

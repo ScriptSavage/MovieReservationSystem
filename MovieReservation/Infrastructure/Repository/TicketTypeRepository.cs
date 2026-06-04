@@ -20,4 +20,11 @@ public class TicketTypeRepository :  ITicketTypeRepository
 
     public async Task<bool> DoesTicketTypeExist(long ticketTypeId) => 
         await _context.TicketTypes.AnyAsync(e=>e.TicketTypeId == ticketTypeId);
+
+    public async Task<int> CountActiveTicketsByTicketTypeIdAsync(long ticketTypeId)
+    {
+        return await _context.Tickets.CountAsync(t =>
+                t.TicketTypeId == ticketTypeId &&
+                t.Reservation.CancelledAt == null);
+    }
 }

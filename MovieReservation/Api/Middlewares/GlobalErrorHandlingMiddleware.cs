@@ -14,6 +14,7 @@ public class GlobalErrorHandlingMiddleware : IMiddleware
         catch (DoesNotExistsException e)
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
+            Console.WriteLine(e.Message);
         }
         catch (InvalidLoginException e)
         {
@@ -31,6 +32,11 @@ public class GlobalErrorHandlingMiddleware : IMiddleware
         }
         catch (InvalidOperationException e)
         {
+            Console.WriteLine(e.Message);
+        }
+        catch (InvalidDateException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
             Console.WriteLine(e.Message);
         }
         catch (Exception e)
